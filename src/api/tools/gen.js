@@ -65,3 +65,17 @@ export function toProjectTable(tableId) {
   })
 }
 
+export function toProjectTableCheckRole(tableId, ischeckrole) {
+  return request({
+    url: '/api/v1/gen/toproject/' + tableId + '?ischeckrole=' + ischeckrole,
+    method: 'get'
+  })
+}
+
+// 生成菜单到数据库
+export function toDBTable(tableId) {
+  return request({
+    url: '/api/v1/gen/todb/' + tableId,
+    method: 'get'
+  })
+}
