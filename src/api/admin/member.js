@@ -15,8 +15,14 @@ export function dataMember(id) {
   })
 }
 
+export function dataWorth() {
+  return request({
+    url: '/api/v1/netWorth/',
+    method: 'get'
+  })
+}
+
 export function delMember(id) {
-  console.log(123123, id)
   return request({
     url: '/api/v1/member/' + id,
     method: 'delete'
@@ -27,6 +33,15 @@ export function delMember(id) {
 export function updateMember(data) {
   return request({
     url: '/api/v1/member/',
+    method: 'put',
+    data: data
+  })
+}
+
+// 修改
+export function updateWorth(data) {
+  return request({
+    url: '/api/v1/netWorth/',
     method: 'put',
     data: data
   })

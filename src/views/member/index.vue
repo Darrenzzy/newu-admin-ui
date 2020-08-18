@@ -12,16 +12,16 @@
               @keyup.enter.native="handleQuery"
             />
           </el-form-item>
-          <!--                    <el-form-item label="状态">-->
-          <!--                        <el-select v-model="queryParams.visible" placeholder="会员状态" clearable size="small">-->
-          <!--                            <el-option-->
-          <!--                                    v-for="dict in visibleOptions"-->
-          <!--                                    :key="dict.dictValue"-->
-          <!--                                    :label="dict.dictLabel"-->
-          <!--                                    :value="dict.dictValue"-->
-          <!--                            />-->
-          <!--                        </el-select>-->
-          <!--                    </el-form-item>-->
+
+          <el-form-item label="手机号">
+            <el-input
+              v-model="queryParams.mobile"
+              placeholder="请输入会员名称"
+              clearable
+              size="small"
+              @keyup.enter.native="handleQuery"
+            />
+          </el-form-item>
           <el-form-item>
             <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
 
@@ -115,7 +115,7 @@
 </template>
 
 <script>
-import { dataMember, listMember, updateMember, delMember } from '@/api/admin/member'
+import { dataMember, delMember, listMember, updateMember } from '@/api/admin/member'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
 export default {
@@ -307,7 +307,6 @@ export default {
         cancelButtonText: '取消2',
         type: 'warning'
       }).then(function() {
-        console.log(444444, memberIds)
         return delMember(memberIds)
       }).then(() => {
         this.getList()
