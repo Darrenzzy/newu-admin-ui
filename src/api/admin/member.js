@@ -1,5 +1,4 @@
 import request from '@/utils/request'
-
 // 查询菜单列表
 export function listMember(query) {
   return request({
@@ -9,15 +8,15 @@ export function listMember(query) {
   })
 }
 
-export function dataMember(query) {
+export function dataMember(id) {
   return request({
-    url: '/api/v1/member/data',
-    method: 'get',
-    params: query
+    url: '/api/v1/member/data/' + id,
+    method: 'get'
   })
 }
 
 export function delMember(id) {
+  console.log(123123, id)
   return request({
     url: '/api/v1/member/' + id,
     method: 'delete'
@@ -27,7 +26,7 @@ export function delMember(id) {
 // 修改
 export function updateMember(data) {
   return request({
-    url: '/api/v1/member',
+    url: '/api/v1/member/',
     method: 'put',
     data: data
   })
