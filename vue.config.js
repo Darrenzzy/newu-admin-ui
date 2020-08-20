@@ -41,14 +41,6 @@ module.exports = {
             errors: true
         },
         proxy: {
-            // "/login": {
-            //     target: 'http://localhost:8009',
-            //     changeOrigin: true,
-            // },
-            // "/refreshtoken": {
-            //     target: 'http://localhost:8009',
-            //     changeOrigin: true,
-            // },
             "/dev": {
                 target: 'http://localhost:8009',
                 changeOrigin: true,
