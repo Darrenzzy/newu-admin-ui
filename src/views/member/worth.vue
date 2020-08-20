@@ -2,69 +2,45 @@
   <BasicLayout>
     <template #wrapper>
       <el-card class="box-card">
-
-        <el-form ref="form" :model="form" label-width="80px">
-
+        <el-form ref="form" :model="form" :rules="rules" label-width="120px">
           <el-form-item label="基金代码">
-            <el-input v-model="form.code" />
+            <el-input v-model="form.code" style="width: 200px;" type="number" />
           </el-form-item>
           <el-form-item label="基金名称">
-            <el-input v-model="form.wond_name" />
+            <el-input v-model="form.wond_name" style="width: 200px;" />
           </el-form-item>
           <el-form-item label="单位净值">
-            <el-input v-model="form.unit_worth" />
+            <el-input v-model="form.unit_worth" style="width: 200px;" />
           </el-form-item>
           <el-form-item label="累计净值">
-            <el-input v-model="form.net_worth" />
+            <el-input v-model="form.net_worth" style="width: 200px;" />
           </el-form-item>
           <el-form-item label="近三个月(%)">
-            <el-input v-model="form.three_muoth" />
+            <el-input v-model="form.three_muoth" style="width: 200px;" />
           </el-form-item>
           <el-form-item label="近六个月(%)">
-            <el-input v-model="form.six_mouth" />
+            <el-input v-model="form.six_mouth" style="width: 200px;" />
           </el-form-item>
           <el-form-item label="近一年(%)">
-            <el-input v-model="form.last_year" />
+            <el-input v-model="form.last_year" style="width: 200px;" />
           </el-form-item>
           <el-form-item label="今年以来(%)">
-            <el-input v-model="form.now_year" />
+            <el-input v-model="form.now_year" style="width: 200px;" />
           </el-form-item>
           <el-form-item label="成立以来(%)">
-            <el-input v-model="form.build_before" />
+            <el-input v-model="form.build_before" style="width: 200px;" />
           </el-form-item>
 
-          <el-form-item label="上次更新时间" align="center" prop="create_at" width="80">
-            <el-input :aria-placeholder="parseTime(form.create_by)" :disabled="true" />
-
-          </el-form-item>
-
-          <el-form-item label="即时配送">
-            <el-switch v-model="form.delivery" />
-          </el-form-item>
-          <el-form-item label="活动性质">
-            <el-checkbox-group v-model="form.type">
-              <el-checkbox label="美食/餐厅线上活动" name="type" />
-              <el-checkbox label="地推活动" name="type" />
-              <el-checkbox label="线下主题活动" name="type" />
-              <el-checkbox label="单纯品牌曝光" name="type" />
-            </el-checkbox-group>
-          </el-form-item>
-          <el-form-item label="特殊资源">
-            <el-radio-group v-model="form.resource">
-              <el-radio label="线上品牌商赞助" />
-              <el-radio label="线下场地免费" />
-            </el-radio-group>
-          </el-form-item>
-          <el-form-item label="活动形式">
-            <el-input v-model="form.desc" type="textarea" />
+          <el-form-item label="上次更新时间" width="80">
+            <el-input style="width: 200px;" :placeholder="formCreate_by(form.update_by)" :disabled="true" />
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="onSubmit">立即创建</el-button>
-            <el-button>取消</el-button>
+            <el-button type="primary" size="mini" @click="submit">保存</el-button>
+            <el-button type="danger" size="mini" @click="close">关闭</el-button>
           </el-form-item>
         </el-form>
-
       </el-card>
+
     </template>
   </BasicLayout>
 </template>
@@ -121,11 +97,49 @@ export default {
       }
     }
   },
+  watch: {
+    'create_by': function(time) {
+      this.create_by = 123
+      const values = (time || '').split(':')
+      if (values.length >= 2) {
+        const hours = parseInt(values[0], 10)
+        const minutes = parseInt(values[1], 10)
+
+        return {
+          hours,
+          minutes
+        }
+      }
+      /* istanbul ignore next */
+      return null
+    }
+  },
   created() {
     this.getData()
   },
   methods: {
+    formCreate_by(d) {
+      return new Date(d).toLocaleString()
+    },
+    submit() {
+      this.$refs['form'].validate(valid => {
+        if (valid) {
+          this.form.code = parseInt(this.form.code)
+          updateWorth(this.form).then(response => {
+            if (response.code === 200) {
+              this.msgSuccess('更新成功')
+            } else {
+              this.msgError(response.msg)
+            }
+          })
+        }
+      })
+    },
 
+    close() {
+      this.$store.dispatch('tagsView/delView', this.$route)
+      this.$router.push({ path: '/index' })
+    },
     /** 查询会员列表 */
     getData() {
       this.loading = true
@@ -178,35 +192,6 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.getData()
-    },
-
-    /** 提交按钮 */
-    submitForm: function() {
-      this.$refs['form'].validate(valid => {
-        if (valid) {
-          if (this.form.ID !== undefined) {
-            updateWorth(this.form).then(response => {
-              if (response.code === 200) {
-                this.msgSuccess('修改成功')
-                this.open = false
-                this.getData()
-              } else {
-                this.msgError(response.msg)
-              }
-            })
-            // } else {
-            // addMenu(this.form).then(response => {
-            //     if (response.code === 200) {
-            //         this.msgSuccess('新增成功')
-            //         this.open = false
-            //         this.getData()
-            //     } else {
-            //         this.msgError(response.msg)
-            //     }
-            // })
-          }
-        }
-      })
     }
 
   }
