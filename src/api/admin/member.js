@@ -1,8 +1,17 @@
 import request from '@/utils/request'
+
 // 查询菜单列表
 export function listMember(query) {
   return request({
     url: '/api/v1/member/list',
+    method: 'get',
+    params: query
+  })
+}
+
+export function listWorth(query) {
+  return request({
+    url: '/api/v1/netWorth/list',
     method: 'get',
     params: query
   })
@@ -15,9 +24,9 @@ export function dataMember(id) {
   })
 }
 
-export function dataWorth() {
+export function dataWorth(id) {
   return request({
-    url: '/api/v1/netWorth/',
+    url: '/api/v1/netWorth/data/' + id,
     method: 'get'
   })
 }
@@ -34,6 +43,14 @@ export function updateMember(data) {
   return request({
     url: '/api/v1/member/',
     method: 'put',
+    data: data
+  })
+}
+
+export function addWorth(data) {
+  return request({
+    url: '/api/v1/netWorth/',
+    method: 'post',
     data: data
   })
 }

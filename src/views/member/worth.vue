@@ -2,43 +2,87 @@
   <BasicLayout>
     <template #wrapper>
       <el-card class="box-card">
-        <el-form ref="form" :model="form" :rules="rules" label-width="120px">
-          <el-form-item label="基金代码">
-            <el-input v-model="form.code" style="width: 200px;" type="number" />
-          </el-form-item>
-          <el-form-item label="基金名称">
-            <el-input v-model="form.wond_name" style="width: 200px;" />
-          </el-form-item>
-          <el-form-item label="单位净值">
-            <el-input v-model="form.unit_worth" style="width: 200px;" />
-          </el-form-item>
-          <el-form-item label="累计净值">
-            <el-input v-model="form.net_worth" style="width: 200px;" />
-          </el-form-item>
-          <el-form-item label="近三个月(%)">
-            <el-input v-model="form.three_muoth" style="width: 200px;" />
-          </el-form-item>
-          <el-form-item label="近六个月(%)">
-            <el-input v-model="form.six_mouth" style="width: 200px;" />
-          </el-form-item>
-          <el-form-item label="近一年(%)">
-            <el-input v-model="form.last_year" style="width: 200px;" />
-          </el-form-item>
-          <el-form-item label="今年以来(%)">
-            <el-input v-model="form.now_year" style="width: 200px;" />
-          </el-form-item>
-          <el-form-item label="成立以来(%)">
-            <el-input v-model="form.build_before" style="width: 200px;" />
-          </el-form-item>
+        <el-table v-loading="loading" :data="worthList" @selection-change="handleSelectionChange">
+          <el-table-column type="selection" width="55" align="center" />
+          <el-table-column label="基金代码" prop="code" width="120" />
+          <el-table-column label="基金名称" prop="wond_name" width="120" />
+          <el-table-column label="单位净值" prop="unit_worth" width="120" />
+          <el-table-column label="累计净值" prop="net_worth" width="120" />
+          <el-table-column label="涨跌幅" prop="three_muoth" width="120" />
+          <el-table-column label="风险等级" prop="six_mouth" width="120" />
+          <el-table-column label="购买费率" prop="last_year" width="120" />
+          <!--                    <el-table-column label="今年以来(%)" prop="now_year" width="120"/>-->
+          <el-table-column label="成立以来(%)" prop="build_before" width="120" />
+          <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+            <template slot-scope="scope">
+              <el-button
+                v-permisaction="['system:sysrole:edit']"
+                size="mini"
+                type="text"
+                icon="el-icon-edit"
+                @click="handleUpdate(scope.row)"
+              >修改
+              </el-button>
+              <el-button
+                v-permisaction="['system:sysrole:remove']"
+                size="mini"
+                type="text"
+                icon="el-icon-delete"
+                @click="handleDelete(scope.row)"
+              >删除
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
 
-          <el-form-item label="上次更新时间" width="80">
-            <el-input style="width: 200px;" :placeholder="formCreate_by(form.update_by)" :disabled="true" />
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" size="mini" @click="submit">保存</el-button>
-            <el-button type="danger" size="mini" @click="close">关闭</el-button>
-          </el-form-item>
-        </el-form>
+        <pagination
+          v-show="total>0"
+          :total="total"
+          :page.sync="queryParams.pageIndex"
+          :limit.sync="queryParams.pageSize"
+          @pagination="getList"
+        />
+        <el-dialog :title="title" :visible.sync="open" width="600px">
+          <el-form ref="form" :model="form" :rules="rules" label-width="120px">
+            <el-form-item label="基金名称">
+              <el-input v-model="form.wond_name" style="width: 200px;" />
+            </el-form-item>
+            <el-form-item label="基金代码">
+              <el-input v-model="form.code" style="width: 200px;" type="number" />
+            </el-form-item>
+
+            <el-form-item label="单位净值">
+              <el-input v-model="form.unit_worth" style="width: 200px;" />
+            </el-form-item>
+            <el-form-item label="累计净值">
+              <el-input v-model="form.net_worth" style="width: 200px;" />
+            </el-form-item>
+            <el-form-item label="涨跌幅">
+              <el-input v-model="form.three_muoth" style="width: 200px;" />
+            </el-form-item>
+            <el-form-item label="风险等级">
+              <el-input v-model="form.six_mouth" style="width: 200px;" />
+            </el-form-item>
+            <el-form-item label="购买费率">
+              <el-input v-model="form.last_year" style="width: 200px;" />
+            </el-form-item>
+            <!--                        <el-form-item label="今年以来(%)">-->
+            <!--                            <el-input v-model="form.now_year" style="width: 200px;"/>-->
+            <!--                        </el-form-item>-->
+
+            <el-form-item label="成立以来(%)">
+              <el-input v-model="form.build_before" style="width: 200px;" />
+            </el-form-item>
+
+            <el-form-item label="上次更新时间" width="80">
+              <el-input style="width: 200px;" :placeholder="formCreate_by(form.update_by)" :disabled="true" />
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" size="mini" @click="submit">保存</el-button>
+              <el-button type="danger" size="mini" @click="close">关闭</el-button>
+            </el-form-item>
+          </el-form>
+        </el-dialog>
       </el-card>
 
     </template>
@@ -46,7 +90,7 @@
 </template>
 
 <script>
-import { dataWorth, updateWorth } from '@/api/admin/member'
+import { addWorth, dataWorth, listWorth, updateWorth } from '@/api/admin/member'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
 export default {
@@ -66,6 +110,7 @@ export default {
       total: 0,
       // 角色表格数据
       worth: [],
+      worthList: [],
       // 弹出层标题
       title: '',
       // 是否显示弹出层
@@ -82,6 +127,14 @@ export default {
       defaultProps: {
         children: 'children',
         label: 'label'
+      },
+      // 查询参数
+      queryParams: {
+        pageIndex: 1,
+        pageSize: 10,
+        roleName: undefined,
+        roleKey: undefined,
+        status: undefined
       },
       // 表单校验
       rules: {
@@ -115,19 +168,42 @@ export default {
     }
   },
   created() {
-    this.getData()
+    this.getList()
   },
   methods: {
     formCreate_by(d) {
       return new Date(d).toLocaleString()
     },
+    /** 修改按钮操作 */
+    handleUpdate(row) {
+      this.reset()
+      dataWorth(row.ID).then(response => {
+        this.form = response.data
+        this.open = true
+        this.title = '修改会员'
+      })
+    },
     submit() {
       this.$refs['form'].validate(valid => {
         if (valid) {
-          this.form.code = parseInt(this.form.code)
-          updateWorth(this.form).then(response => {
+          if (this.form.ID !== undefined) {
+            this.form.code = parseInt(this.form.code)
+            updateWorth(this.form).then(response => {
+              if (response.code === 200) {
+                this.msgSuccess('更新成功')
+                this.open = false
+                this.getList()
+              } else {
+                this.msgError(response.msg)
+              }
+            })
+          }
+        } else {
+          addWorth(this.form).then(response => {
             if (response.code === 200) {
-              this.msgSuccess('更新成功')
+              this.msgSuccess('新增成功')
+              this.open = false
+              this.getList()
             } else {
               this.msgError(response.msg)
             }
@@ -147,6 +223,16 @@ export default {
         response => {
           this.worth = response.data
           this.form = response.data
+          this.loading = false
+        }
+      )
+    },
+    getList() {
+      this.loading = true
+      listWorth(this.addDateRange(this.queryParams, this.dateRange)).then(
+        response => {
+          this.worthList = response.data.list
+          this.total = response.data.count
           this.loading = false
         }
       )

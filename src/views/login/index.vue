@@ -23,7 +23,7 @@
     <div class="login-weaper animated bounceInDown">
       <div class="login-left">
         <div class="login-time" v-text="currentTime" />
-        <img :src="sysInfo.logo" alt="" class="img">
+        <img src="/./favicon.ico" alt="" class="img">
         <p class="title" v-text="sysInfo.name" />
       </div>
       <div class="login-border">

@@ -40,15 +40,15 @@ module.exports = {
             warnings: false,
             errors: true
         },
-        proxy: {
-            "/dev": {
-                target: 'http://localhost:8009',
-                changeOrigin: true,
-                pathRewrite: {
-                  '/dev/': '/'
-                }
-            }
-        }
+        // proxy: {
+        //     "/dev": {
+        //         target: 'http://localhost:8009',
+        //         changeOrigin: true,
+        //         pathRewrite: {
+        //           '/dev/': '/'
+        //         }
+        //     }
+        // }
     },
     configureWebpack: {
         plugins: [
