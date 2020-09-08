@@ -31,6 +31,13 @@ export function dataWorth(id) {
   })
 }
 
+export function delWorth(id) {
+  return request({
+    url: '/api/v1/netWorth/' + id,
+    method: 'delete'
+  })
+}
+
 export function delMember(id) {
   return request({
     url: '/api/v1/member/' + id,
@@ -48,6 +55,7 @@ export function updateMember(data) {
 }
 
 export function addWorth(data) {
+  data.code = parseInt(data.code)
   return request({
     url: '/api/v1/netWorth/',
     method: 'post',

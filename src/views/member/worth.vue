@@ -2,6 +2,27 @@
   <BasicLayout>
     <template #wrapper>
       <el-card class="box-card">
+        <el-row :gutter="10" class="mb8">
+          <el-col :span="1.5">
+            <el-button
+              v-permisaction="['system:sysrole:add']"
+              type="primary"
+              icon="el-icon-plus"
+              size="mini"
+              @click="handleAdd"
+            >新增</el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button
+              v-permisaction="['system:sysrole:remove']"
+              type="danger"
+              icon="el-icon-delete"
+              size="mini"
+              :disabled="multiple"
+              @click="handleDelete"
+            >删除</el-button>
+          </el-col>
+        </el-row>
         <el-table v-loading="loading" :data="worthList" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55" align="center" />
           <el-table-column label="基金代码" prop="code" width="120" />
@@ -11,7 +32,6 @@
           <el-table-column label="涨跌幅" prop="three_muoth" width="120" />
           <el-table-column label="风险等级" prop="six_mouth" width="120" />
           <el-table-column label="购买费率" prop="last_year" width="120" />
-          <!--                    <el-table-column label="今年以来(%)" prop="now_year" width="120"/>-->
           <el-table-column label="成立以来(%)" prop="build_before" width="120" />
           <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
             <template slot-scope="scope">
@@ -21,16 +41,14 @@
                 type="text"
                 icon="el-icon-edit"
                 @click="handleUpdate(scope.row)"
-              >修改
-              </el-button>
+              >修改</el-button>
               <el-button
                 v-permisaction="['system:sysrole:remove']"
                 size="mini"
                 type="text"
                 icon="el-icon-delete"
                 @click="handleDelete(scope.row)"
-              >删除
-              </el-button>
+              >删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -75,7 +93,11 @@
             </el-form-item>
 
             <el-form-item label="上次更新时间" width="80">
-              <el-input style="width: 200px;" :placeholder="formCreate_by(form.update_by)" :disabled="true" />
+              <el-input
+                style="width: 200px;"
+                :placeholder="formCreate_by(form.update_by)"
+                :disabled="true"
+              />
             </el-form-item>
             <el-form-item>
               <el-button type="primary" size="mini" @click="submit">保存</el-button>
@@ -84,13 +106,18 @@
           </el-form>
         </el-dialog>
       </el-card>
-
     </template>
   </BasicLayout>
 </template>
 
 <script>
-import { addWorth, dataWorth, listWorth, updateWorth } from '@/api/admin/member'
+import {
+  addWorth,
+  dataWorth,
+  delWorth,
+  listWorth,
+  updateWorth
+} from '@/api/admin/member'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
 export default {
@@ -151,7 +178,7 @@ export default {
     }
   },
   watch: {
-    'create_by': function(time) {
+    create_by: function(time) {
       this.create_by = 123
       const values = (time || '').split(':')
       if (values.length >= 2) {
@@ -177,18 +204,25 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset()
-      dataWorth(row.ID).then(response => {
+      dataWorth(row.ID).then((response) => {
         this.form = response.data
         this.open = true
         this.title = '修改会员'
       })
     },
+    /** 新增按钮操作 */
+    handleAdd() {
+      this.reset()
+      this.open = true
+      this.title = '添加记录'
+      this.isEdit = false
+    },
     submit() {
-      this.$refs['form'].validate(valid => {
+      this.$refs['form'].validate((valid) => {
         if (valid) {
           if (this.form.ID !== undefined) {
             this.form.code = parseInt(this.form.code)
-            updateWorth(this.form).then(response => {
+            updateWorth(this.form).then((response) => {
               if (response.code === 200) {
                 this.msgSuccess('更新成功')
                 this.open = false
@@ -197,17 +231,17 @@ export default {
                 this.msgError(response.msg)
               }
             })
+          } else {
+            addWorth(this.form).then((response) => {
+              if (response.code === 200) {
+                this.msgSuccess('新增成功')
+                this.open = false
+                this.getList()
+              } else {
+                this.msgError(response.msg)
+              }
+            })
           }
-        } else {
-          addWorth(this.form).then(response => {
-            if (response.code === 200) {
-              this.msgSuccess('新增成功')
-              this.open = false
-              this.getList()
-            } else {
-              this.msgError(response.msg)
-            }
-          })
         }
       })
     },
@@ -219,18 +253,16 @@ export default {
     /** 查询会员列表 */
     getData() {
       this.loading = true
-      dataWorth().then(
-        response => {
-          this.worth = response.data
-          this.form = response.data
-          this.loading = false
-        }
-      )
+      dataWorth().then((response) => {
+        this.worth = response.data
+        this.form = response.data
+        this.loading = false
+      })
     },
     getList() {
       this.loading = true
       listWorth(this.addDateRange(this.queryParams, this.dateRange)).then(
-        response => {
+        (response) => {
           this.worthList = response.data.list
           this.total = response.data.count
           this.loading = false
@@ -239,7 +271,7 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.ID)
+      this.ids = selection.map((item) => item.ID)
       this.single = selection.length !== 1
       this.multiple = !selection.length
     },
@@ -263,23 +295,32 @@ export default {
     // 表单重置
     reset() {
       this.form = {
-        menuId: undefined,
-        parentId: 0,
-        menuName: undefined,
-        icon: undefined,
-        menuType: 'M',
-        sort: 0,
-        action: this.form.menuType === 'A' ? this.form.action : '',
-        isFrame: '1',
-        visible: '0'
+        code: 0
+
       }
       this.resetForm('form')
+    },
+    /** 删除按钮操作 */
+    handleDelete(row) {
+      const ids = row.ID || this.ids
+      this.$confirm('是否确认删除编号为"' + ids + '"的数据项?', '警告', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(function() {
+          return delWorth(ids)
+        })
+        .then(() => {
+          this.getList()
+          this.msgSuccess('删除成功')
+        })
+        .catch(function() {})
     },
     /** 搜索按钮操作 */
     handleQuery() {
       this.getData()
     }
-
   }
 }
 </script>
