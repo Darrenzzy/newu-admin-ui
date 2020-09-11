@@ -24,11 +24,16 @@
           </el-form-item>
           <el-form-item>
             <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-
           </el-form-item>
+          <el-button
+            :loading="downloadLoading"
+            style="margin:0 0 20px 20px;"
+            type="primary"
+            icon="el-icon-document"
+            @click="handleDownload"
+          >导出 Excel</el-button>
         </el-form>
         <el-row :gutter="10" class="mb8">
-
           <el-col :span="1.5">
             <el-button
               v-permisaction="['system:sysrole:remove']"
@@ -37,8 +42,7 @@
               size="mini"
               :disabled="multiple"
               @click="handleDelete"
-            >删除
-            </el-button>
+            >删除</el-button>
           </el-col>
         </el-row>
         <el-table v-loading="loading" :data="memberList" @selection-change="handleSelectionChange">
@@ -60,16 +64,14 @@
                 type="text"
                 icon="el-icon-edit"
                 @click="handleUpdate(scope.row)"
-              >修改
-              </el-button>
+              >修改</el-button>
               <el-button
                 v-permisaction="['system:sysrole:remove']"
                 size="mini"
                 type="text"
                 icon="el-icon-delete"
                 @click="handleDelete(scope.row)"
-              >删除
-              </el-button>
+              >删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -87,7 +89,6 @@
           <el-form ref="form" :model="form" :rules="rules" label-width="80px">
             <el-row>
               <el-col :span="24">
-
                 <el-form-item label="会员名称" prop="username">
                   <el-input v-model="form.username" placeholder="请输入会员名称" />
                 </el-form-item>
@@ -99,9 +100,7 @@
                 <el-form-item label="手机号" prop="mobile">
                   <el-input v-model="form.mobile" controls-position="right" />
                 </el-form-item>
-
               </el-col>
-
             </el-row>
           </el-form>
           <div slot="footer" class="dialog-footer">
@@ -115,7 +114,13 @@
 </template>
 
 <script>
-import { dataMember, delMember, listMember, updateMember } from '@/api/admin/member'
+import { parseTime } from '@/utils'
+import {
+  dataMember,
+  delMember,
+  listMember,
+  updateMember
+} from '@/api/admin/member'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
 export default {
@@ -198,7 +203,12 @@ export default {
         roleSort: [
           { required: true, message: '角色顺序不能为空', trigger: 'blur' }
         ]
-      }
+      },
+      listLoading: true,
+      downloadLoading: false,
+      filename: '',
+      autoWidth: true,
+      bookType: 'xlsx'
     }
   },
   created() {
@@ -209,11 +219,40 @@ export default {
     selected(name) {
       this.form.icon = name
     },
+
+    handleDownload() {
+      this.downloadLoading = true
+      import('@/vendor/Export2Excel').then((excel) => {
+        const tHeader = ['会员名称', '邮箱', '电话', '注册时间']
+        const filterVal = ['username', 'email', 'mobile', 'create_at']
+        const data = this.formatJson(filterVal, this.memberList)
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: this.filename,
+          autoWidth: this.autoWidth,
+          bookType: this.bookType
+        })
+        this.downloadLoading = false
+      })
+    },
+    formatJson(filterVal, jsonData) {
+      return jsonData.map((v) =>
+        filterVal.map((j) => {
+          if (j === 'create_at') {
+            return parseTime(v[j])
+          } else {
+            return v[j]
+          }
+        })
+      )
+    },
+
     /** 查询会员列表 */
     getList() {
       this.loading = true
       listMember(this.addDateRange(this.queryParams, this.dateRange)).then(
-        response => {
+        (response) => {
           this.memberList = response.data.list
           this.total = response.data.count
           this.loading = false
@@ -222,7 +261,7 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.ID)
+      this.ids = selection.map((item) => item.ID)
       this.single = selection.length !== 1
       this.multiple = !selection.length
     },
@@ -265,7 +304,7 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset()
-      dataMember(row.ID).then(response => {
+      dataMember(row.ID).then((response) => {
         this.form = response.data
         this.open = true
         this.title = '修改会员'
@@ -273,10 +312,10 @@ export default {
     },
     /** 提交按钮 */
     submitForm: function() {
-      this.$refs['form'].validate(valid => {
+      this.$refs['form'].validate((valid) => {
         if (valid) {
           if (this.form.ID !== undefined) {
-            updateMember(this.form).then(response => {
+            updateMember(this.form).then((response) => {
               if (response.code === 200) {
                 this.msgSuccess('修改成功')
                 this.open = false
@@ -302,17 +341,23 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const memberIds = row.ID || this.ids
-      this.$confirm('是否确认删除会员编号为"' + memberIds + '"的数据项?', '警告', {
-        confirmButtonText: '确定1',
-        cancelButtonText: '取消2',
-        type: 'warning'
-      }).then(function() {
-        return delMember(memberIds)
-      }).then(() => {
-        this.getList()
-        this.msgSuccess('删除成功')
-      }).catch(function() {
-      })
+      this.$confirm(
+        '是否确认删除会员编号为"' + memberIds + '"的数据项?',
+        '警告',
+        {
+          confirmButtonText: '确定1',
+          cancelButtonText: '取消2',
+          type: 'warning'
+        }
+      )
+        .then(function() {
+          return delMember(memberIds)
+        })
+        .then(() => {
+          this.getList()
+          this.msgSuccess('删除成功')
+        })
+        .catch(function() {})
     }
   }
 }
