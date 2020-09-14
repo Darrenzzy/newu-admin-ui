@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboard-editor-container">
+  <div class="dashboard-editor-container" style="display: none;">
     <el-row :gutter="12">
       <el-col :sm="24" :xs="6" :md="6" :xl="6" :lg="6" :style="{ marginBottom: '12px' }">
         <chart-card title="总销售额" total="￥126,560">
