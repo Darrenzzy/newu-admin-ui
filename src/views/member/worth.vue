@@ -25,14 +25,19 @@
         </el-row>
         <el-table v-loading="loading" :data="worthList" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55" align="center" />
-          <el-table-column label="基金代码" prop="code" width="120" />
           <el-table-column label="基金名称" prop="wond_name" width="120" />
+          <el-table-column label="净值日期" width="120">
+            <template slot-scope="scope">
+              <span>{{ scope.row.date_worth | parseTime('{y}-{m}-{d}') }}</span>
+            </template>
+          </el-table-column>
           <el-table-column label="单位净值" prop="unit_worth" width="120" />
           <el-table-column label="累计净值" prop="net_worth" width="120" />
-          <el-table-column label="涨跌幅" prop="three_muoth" width="120" />
-          <el-table-column label="风险等级" prop="six_mouth" width="120" />
-          <el-table-column label="购买费率" prop="last_year" width="120" />
           <el-table-column label="成立以来(%)" prop="build_before" width="120" />
+          <el-table-column label="今年以来(%)" prop="now_year" width="120" />
+          <el-table-column label="近1年(%)" prop="last_year" width="120" />
+          <el-table-column label="近2年(%)" prop="three_muoth" width="120" />
+          <el-table-column label="近3年(%)" prop="six_mouth" width="120" />
           <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
             <template slot-scope="scope">
               <el-button
@@ -65,8 +70,14 @@
             <el-form-item label="基金名称">
               <el-input v-model="form.wond_name" style="width: 200px;" />
             </el-form-item>
-            <el-form-item label="基金代码">
-              <el-input v-model="form.code" style="width: 200px;" type="number" />
+            <el-form-item label="净值日期">
+              <el-date-picker
+                v-model="form.date_worth"
+                format="yyyy-MM-dd"
+                value-format="yyyy-MM-dd"
+                placeholder="请选择日期选择"
+                clearable
+              />
             </el-form-item>
 
             <el-form-item label="单位净值">
@@ -75,21 +86,22 @@
             <el-form-item label="累计净值">
               <el-input v-model="form.net_worth" style="width: 200px;" />
             </el-form-item>
-            <el-form-item label="涨跌幅">
-              <el-input v-model="form.three_muoth" style="width: 200px;" />
-            </el-form-item>
-            <el-form-item label="风险等级">
-              <el-input v-model="form.six_mouth" style="width: 200px;" />
-            </el-form-item>
-            <el-form-item label="购买费率">
-              <el-input v-model="form.last_year" style="width: 200px;" />
-            </el-form-item>
-            <!--                        <el-form-item label="今年以来(%)">-->
-            <!--                            <el-input v-model="form.now_year" style="width: 200px;"/>-->
-            <!--                        </el-form-item>-->
-
             <el-form-item label="成立以来(%)">
               <el-input v-model="form.build_before" style="width: 200px;" />
+            </el-form-item>
+
+            <el-form-item label="今年以来(%)">
+              <el-input v-model="form.now_year" style="width: 200px;" />
+            </el-form-item>
+            <el-form-item label="近1年(%)">
+              <el-input v-model="form.last_year" style="width: 200px;" />
+            </el-form-item>
+
+            <el-form-item label="近2年(%)">
+              <el-input v-model="form.three_muoth" style="width: 200px;" />
+            </el-form-item>
+            <el-form-item label="近3年(%)">
+              <el-input v-model="form.six_mouth" style="width: 200px;" />
             </el-form-item>
 
             <el-form-item label="上次更新时间" width="80">
@@ -296,7 +308,6 @@ export default {
     reset() {
       this.form = {
         code: 0
-
       }
       this.resetForm('form')
     },

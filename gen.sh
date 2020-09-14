@@ -1,10 +1,11 @@
 #!/bin/bash
 
-npm run build:prod
+yarn build:prod
 
-cd /Users/darren/go/src/service/view
+/Users/darren/go/src/service/view/adminui.sh
+
 git add .
-it commit -am "update code"
+git commit -am "update code"
 git push
 
 

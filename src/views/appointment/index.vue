@@ -18,25 +18,31 @@
           v-loading="loading"
           :data="roleList"
           style="font-size: 18px"
+          row-key="ID"
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="55" align="center" />
 
-          <el-table-column label="姓名" prop="name" :show-overflow-tooltip="true" width="130" />
+          <el-table-column label="姓名" prop="name" :show-overflow-tooltip="true" width="100" />
           <el-table-column label="手机号" prop="mobile" :show-overflow-tooltip="true" width="130" />
 
-          <el-table-column label="性别" prop="sex" :show-overflow-tooltip="true" width="130" />
+          <el-table-column label="性别" prop="sex" :show-overflow-tooltip="true" width="50">
+            <template slot-scope="scope">
+              {{ typeDesc2(scope.row.sex) }}
+            </template>
+          </el-table-column>
+
           <el-table-column label="邮箱" prop="email" :show-overflow-tooltip="true" width="150" />
 
-          <el-table-column label="申请时间" prop="update_by" :show-overflow-tooltip="true" width="130">
+          <el-table-column label="申请时间" prop="update_by" :show-overflow-tooltip="true" width="100">
             <template slot-scope="scope">
               <span>{{ new Date(scope.row.update_by).toLocaleDateString() }}</span>
             </template>
           </el-table-column>
 
-          <el-table-column label="城市" prop="city" :show-overflow-tooltip="true" width="150" />
+          <el-table-column label="城市" prop="city" :show-overflow-tooltip="true" width="120" />
 
-          <el-table-column label="客户列别" prop="class" :show-overflow-tooltip="true" width="150">
+          <el-table-column label="客户列表" prop="class" :show-overflow-tooltip="true" width="80">
             <template slot-scope="scope">
               <el-tag
                 :type="scope.row.class === 1 ? 'success' : 'primary'"
@@ -48,9 +54,14 @@
             <template slot-scope="scope">
               <el-switch
                 v-model="scope.row.status"
+                class="demo"
+                active-color="#00A854"
+                active-text="已处理"
                 active-value="2"
-                inactiv
-                e-value="1"
+                inactive-value="1"
+                inactive-color="#1890ff"
+                inactive-text="待处理"
+
                 @change="handleStatusChange(scope.row)"
               />
             </template>
@@ -81,6 +92,31 @@
   </BasicLayout>
 </template>
 
+<style>
+.demo .el-switch__label {
+  position: absolute;
+  display: none;
+  color: #fff;
+}
+/*打开时文字位置设置*/
+.demo .el-switch__label--right {
+  z-index: 1;
+  right: -3px;
+}
+/*关闭时文字位置设置*/
+.demo .el-switch__label--left {
+  z-index: 1;
+  left: 10px;
+}
+/*显示文字*/
+.demo .el-switch__label.is-active {
+  display: block;
+}
+.demo.el-switch .el-switch__core,
+.el-switch .el-switch__label {
+  width: 90px !important;
+}
+</style>
 <script>
 import {
   addAppointment,
@@ -99,6 +135,7 @@ export default {
   },
   data() {
     return {
+      test: 0,
       // 遮罩层
       loading: true,
       // 选中数组
@@ -179,11 +216,20 @@ export default {
       }
       return '个人'
     },
+    typeDesc2(row) {
+      if (row === '2') {
+        return '女'
+      }
+      return '男'
+    },
     /** 查询角色列表 */
     getList() {
       this.loading = true
       listAppointment(this.addDateRange(this.queryParams, this.dateRange)).then(
         (response) => {
+          response.data.list.map(item => {
+            item.status = item.status + ''
+          })
           this.roleList = response.data.list
           this.total = response.data.count
           this.loading = false
@@ -193,20 +239,23 @@ export default {
 
     // 状态修改
     handleStatusChange(row) {
+      console.log(row.status)
       const text = row.status === 1 ? '未处理' : '已处理'
       this.$confirm('确认要"' + text + '""' + row.name + '"吗?', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       })
-        .then(function() {
+        .then(() => {
           return changeStatus(row)
         })
         .then(() => {
+          // this.test = !this.test;
           this.msgSuccess(text + '成功')
+          this.getList()
         })
         .catch(function() {
-          row.status = row.status === 1 ? 1 : 2
+          row.status = row.status === 2 ? '1' : '2'
         })
     },
     // 取消按钮
