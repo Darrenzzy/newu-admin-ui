@@ -41,6 +41,7 @@
           </el-table-column>
 
           <el-table-column label="城市" prop="city" :show-overflow-tooltip="true" width="120" />
+          <el-table-column label="预约内容" prop="content" :show-overflow-tooltip="true" width="120" />
 
           <el-table-column label="客户列表" prop="class" :show-overflow-tooltip="true" width="80">
             <template slot-scope="scope">
