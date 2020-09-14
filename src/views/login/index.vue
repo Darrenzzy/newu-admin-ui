@@ -28,7 +28,7 @@
       </div>
       <div class="login-border">
         <div class="login-main">
-          <div class="login-title"> 用户登录 </div>
+          <div class="login-title"> 管理员登录 </div>
           <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
             <el-form-item prop="username">
               <span class="svg-container">
