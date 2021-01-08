@@ -97,6 +97,10 @@
                   <el-input v-model="form.email" />
                 </el-form-item>
 
+                <el-form-item label="密码" prop="password" :span="12">
+                  <el-input v-model="form.password" />
+                </el-form-item>
+
                 <el-form-item label="手机号" prop="mobile">
                   <el-input v-model="form.mobile" controls-position="right" />
                 </el-form-item>

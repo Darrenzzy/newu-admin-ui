@@ -104,6 +104,48 @@
               <el-input v-model="form.six_mouth" style="width: 200px;" />
             </el-form-item>
 
+            <el-form-item label="是否为精选" prop="field101">
+              <!-- <el-radio-group v-model="form.is_limit">
+                    <el-radio
+                      v-for="dict in statusOptions"
+                      :key="dict.dictValue"
+                      :label="dict.dictValue"
+                    >{{ dict.dictLabel }}</el-radio>
+                  </el-radio-group> -->
+              <el-radio-group v-model="form.is_limit" size="medium">
+                <el-radio
+                  v-for="(item, index) in field101Options"
+                  :key="index"
+                  :label="item.value"
+                  :disabled="item.disabled"
+                >{{ item.label }}</el-radio>
+              </el-radio-group>
+            </el-form-item>
+
+            <el-form-item label="最低认购金">
+              <el-input v-model="form.min_buy" style="width: 200px;" />
+            </el-form-item>
+
+            <el-form-item label="管理费">
+              <el-input v-model="form.manage_fee" style="width: 200px;" />
+            </el-form-item>
+
+            <el-form-item label="产品开放日">
+              <el-input v-model="form.open_day" style="width: 200px;" />
+            </el-form-item>
+
+            <el-form-item label="基金经理">
+              <el-input v-model="form.manage_name" style="width: 200px;" />
+            </el-form-item>
+
+            <el-form-item label="业绩报酬">
+              <el-input v-model="form.results_reward" style="width: 200px;" />
+            </el-form-item>
+
+            <el-form-item label="简介">
+              <el-input v-model="form.intro" type="textarea" style="width: 200px;" :autosize="{minRows: 5, maxRows: 5}" />
+            </el-form-item>
+
             <el-form-item label="上次更新时间" width="80">
               <el-input
                 style="width: 200px;"
@@ -162,7 +204,9 @@ export default {
       // 状态数据字典
       statusOptions: [],
       // 表单参数
-      form: {},
+      form: {
+        field101: 333
+      },
       defaultProps: {
         children: 'children',
         label: 'label'
@@ -177,6 +221,18 @@ export default {
       },
       // 表单校验
       rules: {
+        field101: [{
+          required: true,
+          message: '单选框组不能为空',
+          trigger: 'change'
+        }],
+        field101Options: [{
+          'label': '111',
+          'value': 1
+        }, {
+          'label': '22',
+          'value': 2
+        }],
         roleName: [
           { required: true, message: '角色名称不能为空', trigger: 'blur' }
         ],
@@ -219,7 +275,7 @@ export default {
       dataWorth(row.ID).then((response) => {
         this.form = response.data
         this.open = true
-        this.title = '修改会员'
+        this.title = '修改记录'
       })
     },
     /** 新增按钮操作 */
