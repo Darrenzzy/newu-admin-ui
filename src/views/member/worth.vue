@@ -104,13 +104,10 @@
               <el-input v-model="form.six_mouth" style="width: 200px;" />
             </el-form-item>
 
-            <el-form-item label="是否为精选" prop="field101">
+            <el-form-item label="是否为精选" prop="is_limit">
               <el-radio-group v-model="form.is_limit" size="medium">
-                <el-radio
-                  v-for="(item) in statusOptions"
-                  :key="item.key"
-                  :label="item.label"
-                />
+                <el-radio :label="1">是</el-radio>
+                <el-radio :label="0">否</el-radio>
               </el-radio-group>
             </el-form-item>
 
@@ -197,10 +194,10 @@ export default {
       dateRange: [],
       // 状态数据字典
       statusOptions: [{
-        key: true,
+        key: '1',
         label: '是'
       }, {
-        key: false,
+        key: '0',
         label: '否'
       }],
       // 表单参数
