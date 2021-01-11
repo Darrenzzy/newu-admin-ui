@@ -65,8 +65,8 @@
           :limit.sync="queryParams.pageSize"
           @pagination="getList"
         />
-        <el-dialog :title="title" :visible.sync="open" width="600px">
-          <el-form ref="form" :model="form" :rules="rules" label-width="120px">
+        <el-dialog :title="title" :visible.sync="open" width="800px">
+          <el-form ref="form" :inline="true" :model="form" :rules="rules" label-width="120px">
             <el-form-item label="基金名称">
               <el-input v-model="form.wond_name" style="width: 200px;" />
             </el-form-item>
@@ -105,20 +105,12 @@
             </el-form-item>
 
             <el-form-item label="是否为精选" prop="field101">
-              <!-- <el-radio-group v-model="form.is_limit">
-                    <el-radio
-                      v-for="dict in statusOptions"
-                      :key="dict.dictValue"
-                      :label="dict.dictValue"
-                    >{{ dict.dictLabel }}</el-radio>
-                  </el-radio-group> -->
               <el-radio-group v-model="form.is_limit" size="medium">
                 <el-radio
-                  v-for="(item, index) in field101Options"
-                  :key="index"
-                  :label="item.value"
-                  :disabled="item.disabled"
-                >{{ item.label }}</el-radio>
+                  v-for="(item) in statusOptions"
+                  :key="item.key"
+                  :label="item.label"
+                />
               </el-radio-group>
             </el-form-item>
 
@@ -153,10 +145,12 @@
                 :disabled="true"
               />
             </el-form-item>
-            <el-form-item>
-              <el-button type="primary" size="mini" @click="submit">保存</el-button>
-              <el-button type="danger" size="mini" @click="close">关闭</el-button>
-            </el-form-item>
+            <div class="button-style">
+              <el-form-item>
+                <el-button type="primary" size="mini" @click="submit">保存</el-button>
+                <el-button type="danger" size="mini" @click="close">关闭</el-button>
+              </el-form-item>
+            </div>
           </el-form>
         </el-dialog>
       </el-card>
@@ -202,7 +196,13 @@ export default {
       // 日期范围
       dateRange: [],
       // 状态数据字典
-      statusOptions: [],
+      statusOptions: [{
+        key: true,
+        label: '是'
+      }, {
+        key: false,
+        label: '否'
+      }],
       // 表单参数
       form: {
         field101: 333
@@ -221,17 +221,10 @@ export default {
       },
       // 表单校验
       rules: {
-        field101: [{
+        is_limit: [{
           required: true,
           message: '单选框组不能为空',
           trigger: 'change'
-        }],
-        field101Options: [{
-          'label': '111',
-          'value': 1
-        }, {
-          'label': '22',
-          'value': 2
         }],
         roleName: [
           { required: true, message: '角色名称不能为空', trigger: 'blur' }
@@ -391,3 +384,6 @@ export default {
   }
 }
 </script>
+<style lang="scss">
+  @import './index.scss';
+</style>
