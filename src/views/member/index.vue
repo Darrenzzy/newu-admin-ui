@@ -36,7 +36,7 @@
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
             <el-button
-              v-permisaction="['system:sysrole:remove']"
+              v-permisaction="['system:member:remove']"
               type="danger"
               icon="el-icon-delete"
               size="mini"
@@ -59,14 +59,14 @@
           <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
             <template slot-scope="scope">
               <el-button
-                v-permisaction="['system:sysrole:edit']"
+                v-permisaction="['system:member:edit']"
                 size="mini"
                 type="text"
                 icon="el-icon-edit"
                 @click="handleUpdate(scope.row)"
               >修改</el-button>
               <el-button
-                v-permisaction="['system:sysrole:remove']"
+                v-permisaction="['system:member:remove']"
                 size="mini"
                 type="text"
                 icon="el-icon-delete"

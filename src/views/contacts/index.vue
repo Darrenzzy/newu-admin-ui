@@ -5,7 +5,7 @@
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
             <el-button
-              v-permisaction="['system:sysrole:remove']"
+              v-permisaction="['system:contacts:remove']"
               type="danger"
               icon="el-icon-delete"
               size="mini"
@@ -59,7 +59,7 @@
           <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
             <template slot-scope="scope">
               <el-button
-                v-permisaction="['system:sysrole:remove']"
+                v-permisaction="['system:contacts:remove']"
                 size="mini"
                 type="text"
                 icon="el-icon-delete"

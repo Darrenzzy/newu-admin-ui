@@ -6,7 +6,7 @@
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
             <el-button
-              v-permisaction="['system:sysrole:add']"
+              v-permisaction="['system:transation:add']"
               type="primary"
               icon="el-icon-plus"
               size="mini"
@@ -16,7 +16,7 @@
           </el-col>
           <!--                    <el-col :span="1.5">-->
           <!--                        <el-button-->
-          <!--                                v-permisaction="['system:sysrole:edit']"-->
+          <!--                                v-permisaction="['system:transation:edit']"-->
           <!--                                type="success"-->
           <!--                                icon="el-icon-edit"-->
           <!--                                size="mini"-->
@@ -27,7 +27,7 @@
           <!--                    </el-col>-->
           <el-col :span="1.5">
             <el-button
-              v-permisaction="['system:sysrole:remove']"
+              v-permisaction="['system:transation:remove']"
               type="danger"
               icon="el-icon-delete"
               size="mini"
@@ -59,7 +59,7 @@
           <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
             <template slot-scope="scope">
               <el-button
-                v-permisaction="['system:sysrole:edit']"
+                v-permisaction="['system:transation:edit']"
                 size="mini"
                 type="text"
                 icon="el-icon-edit"
@@ -67,7 +67,7 @@
               >修改
               </el-button>
               <el-button
-                v-permisaction="['system:sysrole:edit']"
+                v-permisaction="['system:transation:edit']"
                 size="mini"
                 type="text"
                 icon="el-icon-circle-check"
@@ -75,7 +75,7 @@
               >数据权限
               </el-button>
               <el-button
-                v-permisaction="['system:sysrole:remove']"
+                v-permisaction="['system:transation:remove']"
                 size="mini"
                 type="text"
                 icon="el-icon-delete"
