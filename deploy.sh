@@ -1,4 +1,5 @@
 #!/bin/bash
+  yarn build:prod
   cd ../service/view
   module_name='admin'
   tar cvzf "$module_name".tar.gz admin
