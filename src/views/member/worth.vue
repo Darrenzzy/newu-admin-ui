@@ -262,7 +262,7 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset()
-      dataWorth(row.ID).then((response) => {
+      dataWorth(row.id).then((response) => {
         this.form = response.data
         this.open = true
         this.title = '修改记录'
@@ -278,8 +278,8 @@ export default {
     submit() {
       this.$refs['form'].validate((valid) => {
         if (valid) {
-          if (this.form.ID !== undefined) {
-            this.form.code = parseInt(this.form.code)
+          if (this.form.id !== undefined) {
+            // this.form.code = parseInt(this.form.code)
             updateWorth(this.form).then((response) => {
               if (response.code === 200) {
                 this.msgSuccess('更新成功')
@@ -359,7 +359,7 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const ids = row.ID || this.ids
+      const ids = row.id || this.ids
       this.$confirm('是否确认删除编号为"' + ids + '"的数据项?', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
