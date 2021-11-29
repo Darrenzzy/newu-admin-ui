@@ -1,3 +1,4 @@
+import { praseStrEmpty } from '@/utils/costum'
 import request from '@/utils/request'
 
 // 查询菜单列表
@@ -55,7 +56,7 @@ export function updateMember(data) {
 }
 
 export function addWorth(data) {
-  data.code = parseInt(data.code)
+  data.code = praseStrEmpty(data.code)
   return request({
     url: '/api/v1/netWorth/',
     method: 'post',

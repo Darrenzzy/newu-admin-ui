@@ -265,7 +265,7 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map((item) => item.ID)
+      this.ids = selection.map((item) => item.id)
       this.single = selection.length !== 1
       this.multiple = !selection.length
     },
@@ -344,7 +344,7 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const memberIds = row.ID || this.ids
+      const memberIds = row.id || this.ids
       this.$confirm(
         '是否确认删除会员编号为"' + memberIds + '"的数据项?',
         '警告',
