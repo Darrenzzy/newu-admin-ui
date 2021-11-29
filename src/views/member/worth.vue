@@ -26,6 +26,7 @@
         <el-table v-loading="loading" :data="worthList" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55" align="center" />
           <el-table-column label="基金名称" prop="wond_name" width="120" />
+          <el-table-column label="首页显示权重" prop="sortby" width="120" />
           <el-table-column label="净值日期" width="120">
             <template slot-scope="scope">
               <span>{{ scope.row.date_worth | parseTime('{y}-{m}-{d}') }}</span>
@@ -129,6 +130,10 @@
 
             <el-form-item label="业绩报酬">
               <el-input v-model="form.results_reward" style="width: 200px;" />
+            </el-form-item>
+
+            <el-form-item label="首页显示顺序">
+              <el-input v-model.number="form.sortby" style="width: 200px;" />
             </el-form-item>
 
             <el-form-item label="简介">
@@ -353,7 +358,7 @@ export default {
     // 表单重置
     reset() {
       this.form = {
-        code: 0
+        code: ''
       }
       this.resetForm('form')
     },
