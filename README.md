@@ -42,6 +42,12 @@
 
 ```
 
+### 环境
+
+要求: 
+nodev14
+npm@6.14
+
 ## 开发
 
 ```bash
@@ -53,6 +59,10 @@ cd go-admin-ui
 
 # 安装依赖
 npm install
+
+安装过程中遇到 git ls-remote -h -t git://github.com/adobe-webplatform/eve.git 404这类问题
+就替换下本地代理方式 ：git config --global url."https://".insteadOf git:// 
+且开启http代理，可解决。
 
 # 建议不要直接使用 cnpm 安装依赖，会有各种诡异的 bug。可以通过如下操作解决 npm 下载速度慢的问题
 npm install --registry=https://registry.npm.taobao.org
